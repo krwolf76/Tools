@@ -9,6 +9,7 @@
 * 알림 시스템
 
 ## 콘피그(Config) -
+```
 oxide/config/Tools.json 에서 플러그인을 수정할수있습니다.
 {
   "0. true - 활성화 / false - 비활성화": "이부분은 건들지마시오!",
@@ -26,7 +27,9 @@ oxide/config/Tools.json 에서 플러그인을 수정할수있습니다.
   "7. 서버 퇴장 입장 알림 ON/OFF": false,
   "8. 서버 규칙 알림 ON/OFF": false
 }
+```
 ## 데이타(Data) -
+```
 oxide/data/Tools_PlayerData.json 에서 플레이어 데이터를 볼수있습니다.
   "76561198866308187": {
     "DisplayName": [
@@ -61,7 +64,9 @@ oxide/data/Tools_PlayerData.json 에서 플레이어 데이터를 볼수있습�
     "PlayerID": "76561198866308187",
     "ConnectCount": 9
   },
+```
 ## 언어(Lang) -
+```
 oxide/lang/en/Tools.json 에서 플러그인 언어을 수정할수있습니다.
 {
   "처음입장": "{0}님 서버에 새로접속하셨습니다.",
@@ -70,3 +75,4 @@ oxide/lang/en/Tools.json 에서 플러그인 언어을 수정할수있습니다.
   "권한": "<color=red>당신은 권한이 없습니다.</color>",
   "규칙": "{0}님 서버에 접속하셨습니다. 규칙 읽어주세요.\n1. 핵 사용 금지\n2. 욕설/비하 금지\n3. 서로 존중하기"
 }
+```
