@@ -2,6 +2,10 @@
 
 ## 다운로드
 [Tools 다운로드](https://drive.google.com/file/d/1SxmwALzFfsKLzn8BAE_hk0qg9FOrvVO1/view?usp=sharing)
+
+## 업데이트
+* 아직 없음.
+
 ## 미래 계획 -
 * 접속 국가 체크
 * 코드 최적화
