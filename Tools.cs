@@ -1,15 +1,13 @@
-﻿using Oxide.Core.Libraries;
-using Oxide.Game.Rust.Cui;
-using UnityEngine;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using Oxide.Core;
 using System;
+using System.Text.RegularExpressions;
+using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("Tools", "KR_WOLF", "1.0.0")]
+    [Info("Tools", "KR_WOLF", "1.0.1")]
     [Description("KR_WOLF#5912")]
     class Tools : RustPlugin
     {
@@ -127,7 +125,30 @@ namespace Oxide.Plugins
 
             if (_config.ServerJoinMessage == true)
             {
-                Server.Broadcast($"{_config.Prefix}", $"{string.Format(Lang("입장", null, player.displayName))}");
+                var playerAddress = player.net.connection.ipaddress.Split(':')[0];
+
+                webrequest.Enqueue("http://ip-api.com/json/" + playerAddress, null, (code, response) =>
+                {
+                    if (code != 200 || response == null)
+                    {
+                        Server.Broadcast(_config.Prefix + Lang("입장알수없음", null, player.displayName), player.userID);
+
+                        if (_config.PrintToConsole)
+                            Puts(StripRichText(Lang("입장알수없음", null, player.displayName)));
+
+                        return;
+                    }
+
+                    var country = JsonConvert.DeserializeObject<Response>(response).Country;
+
+                    Server.Broadcast(_config.Prefix + Lang("입장", null, player.displayName, country), player.userID);
+
+                    if (_config.PrintToConsole)
+                        Puts(StripRichText(Lang("입장", null, player.displayName, country)));
+
+                }, this);
+
+                //Server.Broadcast($"{_config.Prefix} {string.Format(Lang("입장", null, player.displayName))}");
             }
 
             DataSave();
@@ -156,7 +177,7 @@ namespace Oxide.Plugins
 
             if (_config.ServerLeaveMessage == true)
             {
-                Server.Broadcast($"{_config.Prefix} {string.Format(Lang("퇴장", null, player.displayName))}");
+                Server.Broadcast($"{_config.Prefix} {string.Format(Lang("퇴장", null, player.displayName, reason), player.userID)}");
             }
             DataSave();
         }
@@ -180,6 +201,9 @@ namespace Oxide.Plugins
 
             [JsonProperty("0. 플러그인 칭호 설정")]
             public string Prefix { get; set; } = "<color=#00ffff>[ 알림 ] </color>";
+
+            [JsonProperty("0. 콘솔 로그")]
+            public bool PrintToConsole { get; set; } = true;
 
             [JsonProperty("1. 서버 제목 설정 ON/OFF")]
             public bool ServerTitleToggle { get; set; } = false;
@@ -224,9 +248,10 @@ namespace Oxide.Plugins
         {
             lang.RegisterMessages(new Dictionary<string, string>
             {
-                ["처음입장"] = "{0}님이 서버에 처음 접속하셨습니다.",
-                ["입장"] = "{0} 님은 서버에 접속하셨습니다.",
-                ["퇴장"] = "{0} 님은 서버에서 퇴장하셨습니다.",
+                ["처음입장"] = "{0}님이 서버에 처음 접속하셨습니다. [국가: {1}]",
+                ["입장"] = "{0} 님은 서버에 접속하셨습니다. [국가: {1}]",
+                ["입장알수없음"] = "{0}님은 서버에 접속하셨습니다. [국가: 알수없음]",
+                ["퇴장"] = "{0} 님은 서버에서 퇴장하셨습니다. [이유: {1}]",
                 ["권한"] = "<color=red>당신은 권한이 없습니다.</color>",
                 ["규칙"] = "{0}님 서버에 접속하셨습니다. 규칙 읽어주세요.\n1. 핵 사용 금지\n2. 욕설/비하 금지\n3. 서로 존중하기"
 
@@ -236,6 +261,37 @@ namespace Oxide.Plugins
         private string Lang(string key, string id = null, params object[] args)
         {
             return string.Format(lang.GetMessage(key, this, id), args);
+        }
+
+        private string StripRichText(string text)
+        {
+            var stringReplacements = new string[]
+            {
+                "<b>", "</b>",
+                "<i>", "</i>",
+                "</size>",
+                "</color>"
+            };
+
+            var regexReplacements = new Regex[]
+            {
+                new Regex(@"<color=.+?>"),
+                new Regex(@"<size=.+?>"),
+            };
+
+            foreach (var replacement in stringReplacements)
+                text = text.Replace(replacement, string.Empty);
+
+            foreach (var replacement in regexReplacements)
+                text = replacement.Replace(text, string.Empty);
+
+            return Formatter.ToPlaintext(text);
+        }
+
+        class Response
+        {
+            [JsonProperty("country")]
+            public string Country { get; set; }
         }
         #endregion
 
