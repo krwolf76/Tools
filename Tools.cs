@@ -12,6 +12,7 @@ namespace Oxide.Plugins
     class Tools : RustPlugin
     {
         //서버를 간단하게 수정할수있습니다.
+        //https://github.com/krwolf76/Tools
 
         private Configuration _config;
 
