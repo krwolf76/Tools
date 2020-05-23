@@ -1,5 +1,8 @@
 # Tools - V1.0.1 | 서버 설정 도우미, 입퇴장 알림, 플레이어 데이타 수집
 
+## 디스코드
+[어드민 디스코드 가입](https://discord.gg/BxxFyC2)
+
 ## 다운로드
 [Tools 다운로드](https://drive.google.com/file/d/1SxmwALzFfsKLzn8BAE_hk0qg9FOrvVO1/view?usp=sharing)
 
