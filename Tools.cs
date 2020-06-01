@@ -7,7 +7,7 @@ using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("Tools", "KR_WOLF", "1.0.1")]
+    [Info("Tools", "KR_WOLF", "1.0.2")]
     [Description("KR_WOLF#5912")]
     class Tools : RustPlugin
     {
@@ -18,6 +18,8 @@ namespace Oxide.Plugins
 
         void OnServerInitialized(bool serverInitialized)
         {
+            permission.RegisterPermission("tools.bypass", this);
+
             if (_config.ServerTitleToggle == true)
             {
                 ConsoleSystem.Run(ConsoleSystem.Option.Unrestricted, ($"server.hostname \"{_config.ServerTitle}\""));
@@ -83,7 +85,7 @@ namespace Oxide.Plugins
 
             DataSave();
         }
-        void OnPlayerConnected(BasePlayer player)
+        private void OnPlayerConnected(BasePlayer player)
         {
             var ip = player.net.connection.ipaddress;
             ip = ip.Substring(0, ip.LastIndexOf(':'));
@@ -126,6 +128,9 @@ namespace Oxide.Plugins
 
             if (_config.ServerJoinMessage == true)
             {
+                if(permission.UserHasPermission(player.UserIDString, "tools.bypass"))
+                    return;
+
                 var playerAddress = player.net.connection.ipaddress.Split(':')[0];
 
                 webrequest.Enqueue("http://ip-api.com/json/" + playerAddress, null, (code, response) =>
@@ -148,8 +153,6 @@ namespace Oxide.Plugins
                         Puts(StripRichText(Lang("입장", null, player.displayName, country)));
 
                 }, this);
-
-                //Server.Broadcast($"{_config.Prefix} {string.Format(Lang("입장", null, player.displayName))}");
             }
 
             DataSave();
@@ -178,7 +181,15 @@ namespace Oxide.Plugins
 
             if (_config.ServerLeaveMessage == true)
             {
-                Server.Broadcast($"{_config.Prefix} {string.Format(Lang("퇴장", null, player.displayName, reason), player.userID)}");
+                if (permission.UserHasPermission(player.UserIDString, "tools.bypass"))
+                {
+                    return;
+                }
+                else
+                {
+                    Server.Broadcast($"{_config.Prefix} {string.Format(Lang("퇴장", null, player.displayName, reason), player.userID)}");
+                }
+                
             }
             DataSave();
         }
