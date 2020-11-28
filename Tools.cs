@@ -7,12 +7,12 @@ using Oxide.Core.Libraries.Covalence;
 
 namespace Oxide.Plugins
 {
-    [Info("Tools", "KR_WOLF", "1.0.2")]
-    [Description("KR_WOLF#5912")]
+    [Info("Tools", "UNKNOWN#2214", "1.0.2")]
+    [Description("UNKNOWN#2214")]
     class Tools : RustPlugin
     {
         //서버를 간단하게 수정할수있습니다.
-        //https://github.com/krwolf76/Tools
+        //https://github.com/unkn0wn-97/Tools
 
         private Configuration _config;
 
